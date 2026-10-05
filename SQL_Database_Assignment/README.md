@@ -109,6 +109,41 @@ SQL_Database_Assignment/
 │   ├── Task_4.sql
 │   └── Task_5.sql
 │
+├── Session_15/                        # Session 15: Python SQLite & Pandas SQL Integration (sqlite3, DataFrame, Automation)
+│   ├── Task_1.py
+│   ├── Task_2.py
+│   ├── Task_3.py
+│   ├── Task_4.py
+│   └── Task_5.py
+│
+├── Session_16/                        # Session 16: SQL Analytics & E-Commerce Reports (FoodOrders, TopSongs, KPIs)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
+├── Session_17/                        # Session 17: Relational Reporting & Partitioned Window Functions (Restaurant & Reviews)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
+├── Session_18/                        # Session 18: Advanced Query Analytics & Database Tuning (HAVING, JOINs, Indexes)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
+├── Session_19/                        # Session 19: Zomato Bangalore Case Studies (Koramangala Top Rated, Strategy, Segmentation)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
 ├── Database_Setup/                    # Core Database Setup & Seed Scripts
 │   ├── 01_create_database.sql         # Database creation script
 │   ├── 02_create_tables.sql           # Schema definition (Tables, PK, FK)
@@ -143,7 +178,7 @@ SQL_Database_Assignment/
 
 ## 🗄️ Standard Sample Database: `company_db`
 
-To ensure consistency across Sessions 06 through 14 and Practice modules, a production-grade relational database named `company_db` is defined inside `Database_Setup/`.
+To ensure consistency across Sessions 06 through 19 and Practice modules, a production-grade relational database named `company_db` is defined inside `Database_Setup/`.
 
 ### Entity Relationship & Tables
 - **`departments`**: `department_id` (PK), `department_name`, `location`
@@ -207,9 +242,15 @@ psql -U postgres -d company_db -f Session_11/Task_1.sql
 | **Session 12** | Common Table Expressions (CTEs) | `WITH` clause, Subquery vs CTE readability, Multi-CTEs, Recursive CTEs |
 | **Session 13** | Ranking Window Functions | `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`, `PARTITION BY`, Top-N filtering |
 | **Session 14** | Value & Frame Window Functions | `LAG()`, `LEAD()`, Running Total (`UNBOUNDED PRECEDING`), Moving Average |
+| **Session 15** | Python SQLite & Pandas Integration | `sqlite3`, `pd.read_sql_query`, DataFrame `.apply()`, automated CSV exports |
+| **Session 16** | SQL Data Analytics & E-Commerce | `FoodOrders`, `TopSongs`, revenue reports, dashboard KPIs via `UNION ALL` |
+| **Session 17** | Relational Reporting & Partitioning | Multi-table `JOIN` aggregations, `DENSE_RANK() OVER (PARTITION BY cuisine)` |
+| **Session 18** | Advanced Analytics & Query Tuning | `HAVING`, `LEFT JOIN`, running total window function, B-tree & covering index |
+| **Session 19** | Zomato Bangalore Case Studies | Location/cuisine analytics, low rating strategy, cost segmentation, top chains |
 
 ---
 
 ## 📈 Scalability Note
-This repository architecture is designed to scale seamlessly. Future sessions (`Session_15/`, `Session_16/`, etc.) can be appended directly following the standardized directory pattern.
+This repository architecture is designed to scale seamlessly. Future sessions (`Session_20/`, `Session_21/`, etc.) can be appended directly following the standardized directory pattern.
+
 
