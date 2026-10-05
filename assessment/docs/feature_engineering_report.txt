@@ -1,0 +1,70 @@
+SQL-based feature engineering report
+Predictive Demand Schema — analytics_db (Zomato Bangalore)
+
+1. Grain
+   Training grain is restaurant_id (one row per venue), not the raw listing
+   row. Listing URLs include a ?context= query string; cleaning strips that so
+   51,717 listings collapse to 12,453 restaurants. Listing duplicates are
+   aggregated in vw_restaurant_rating_stats. Ratings keep a composite PK
+   (restaurant_id, listed_in_type, listed_in_city) — 51,634 listing rows.
+
+2. Cleaning that affects features
+   rate values "NEW" and "-" are stored as NULL, not 0. Treating them as 0
+   would bias location averages downward and mark new restaurants as failures.
+   Observed: 10,052 listing rates set to NULL; 41,665 numeric rates kept.
+   Cost strings such as "1,200" are parsed to integers.
+
+3. Loaded row counts (local SQLite after python/run_all.py)
+   locations              93
+   restaurants            12,453
+   cuisines               107
+   restaurant_cuisines    28,679
+   restaurant_types       25
+   restaurant_type_map    14,102
+   ratings                51,634
+   vw_model_features      12,453 (1,780 labelled is_successful = 1)
+
+4. Feature groups (view vw_model_features)
+   Identity     restaurant_id, restaurant_name, location_name
+   Channel      online_order, book_table
+   Price        approx_cost_for_two, cost_band (budget/mid/premium/luxury)
+   Quality      avg_rate (mean 3.62 among 9,460 rated venues)
+   Popularity   max_votes (median 25, max 16,832), listing_count
+   Menu mix     cuisine_count (mean 2.30), rest_type_count
+   Market       location_competitor_count, location_avg_rate, location_avg_cost
+   Target       success_score = avg_rate * votes / (votes + 50)
+                is_successful = 1 if avg_rate >= 4.0 and max_votes >= 100
+
+5. Why success_score uses vote shrinkage
+   A 5.0 rating with 3 votes is unstable. Dividing by (votes + 50) shrinks
+   low-vote venues toward zero without needing log functions that differ
+   between MySQL and SQLite.
+
+6. Join path used by the views
+   restaurants
+     JOIN locations                 USING location_id          -- idx_restaurants_location_id
+     JOIN ratings                   USING restaurant_id       -- idx_ratings_restaurant_rate
+     JOIN restaurant_cuisines       USING restaurant_id
+     JOIN cuisines                  USING cuisine_id          -- idx_cuisines_cuisine_name
+                                                          -- idx_restaurant_cuisines_cuisine_id
+
+7. Observed analytical results
+   Highest average success_score locations (sample):
+     Lavelle Road, Church Street, Sankey Road, St. Marks Road,
+     Koramangala 5th Block, Indiranagar.
+
+   Cuisines most common among is_successful = 1 restaurants:
+     North Indian (658), Chinese (404), Continental (372), Desserts (253),
+     Cafe (243), Italian (242), Beverages (205), South Indian (195),
+     Fast Food (194), Biryani (149).
+
+8. Model-use notes
+   Export: output/model_features.csv  (or SELECT * FROM vw_model_features)
+   Drop rows where avg_rate IS NULL if the model cannot handle unknown ratings
+   (2,993 venues have no numeric rate), or keep them and add an unrated flag.
+   Do not leak listing_count from future scrape waves if you time-split data.
+
+9. Files
+   sql/04_feature_engineering.sql
+   python/apply_indexes_and_features.py
+   output/model_features.csv

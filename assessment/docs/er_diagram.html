@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>analytics_db ER Diagram (3NF)</title>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+  <style>
+    body { font-family: Segoe UI, sans-serif; margin: 24px; color: #222; }
+    h1 { font-size: 1.4rem; }
+    .note { max-width: 900px; line-height: 1.45; }
+    .mermaid { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Predictive Demand Schema — ER Diagram (3NF)</h1>
+  <p class="note">
+    Entities are in third normal form: repeating groups (cuisines, restaurant types)
+    are exploded into dictionaries plus junction tables. Ratings use a composite
+    primary key so the same restaurant can appear in multiple Zomato listing
+    contexts without duplicating restaurant attributes.
+  </p>
+  <pre class="mermaid">
+erDiagram
+    LOCATIONS ||--o{ RESTAURANTS : contains
+    RESTAURANTS ||--o{ RATINGS : has
+    RESTAURANTS ||--o{ RESTAURANT_CUISINES : tagged
+    CUISINES ||--o{ RESTAURANT_CUISINES : used_by
+    RESTAURANTS ||--o{ RESTAURANT_TYPE_MAP : classified
+    RESTAURANT_TYPES ||--o{ RESTAURANT_TYPE_MAP : assigned
+
+    LOCATIONS {
+        int location_id PK
+        varchar location_name UK
+    }
+    RESTAURANTS {
+        int restaurant_id PK
+        varchar restaurant_name
+        varchar url UK
+        text address
+        varchar phone
+        boolean online_order
+        boolean book_table
+        int approx_cost_for_two
+        int location_id FK
+    }
+    RATINGS {
+        int restaurant_id PK_FK
+        varchar listed_in_type PK
+        varchar listed_in_city PK
+        decimal rate
+        int votes
+    }
+    CUISINES {
+        int cuisine_id PK
+        varchar cuisine_name UK
+    }
+    RESTAURANT_CUISINES {
+        int restaurant_id PK_FK
+        int cuisine_id PK_FK
+    }
+    RESTAURANT_TYPES {
+        int rest_type_id PK
+        varchar rest_type_name UK
+    }
+    RESTAURANT_TYPE_MAP {
+        int restaurant_id PK_FK
+        int rest_type_id PK_FK
+    }
+  </pre>
+  <h2>Normalization notes</h2>
+  <ul class="note">
+    <li><strong>1NF:</strong> Comma-separated cuisines and rest_type values are atomic rows, not lists.</li>
+    <li><strong>2NF:</strong> Non-key attributes (address, cost, flags) depend on restaurant_id only, not on part of the ratings composite key.</li>
+    <li><strong>3NF:</strong> Location name lives on locations, not repeated on restaurants. Cuisine names live on cuisines. Listing-specific rate/votes live on ratings.</li>
+    <li><strong>Cardinality:</strong> Location 1:N Restaurant; Restaurant 1:N Rating; Restaurant M:N Cuisine; Restaurant M:N Type.</li>
+    <li><strong>ON DELETE CASCADE:</strong> Deleting a location deletes its restaurants; deleting a restaurant deletes ratings and junction rows.</li>
+  </ul>
+</body>
+</html>

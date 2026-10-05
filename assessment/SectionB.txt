@@ -1,0 +1,32 @@
+Section B: Practical Task (how each requirement is delivered)
+
+1. Python ETL with SQLAlchemy (schema + composite PK on ratings)
+   File: python/etl_create_schema.py  (+ python/db_models.py)
+   Command: python python/etl_create_schema.py
+   Ratings primary key is (restaurant_id, listed_in_type, listed_in_city).
+
+2. ALTER statements for restaurants -> locations FK with ON DELETE CASCADE
+   File: sql/02_alter_referential_integrity.sql
+   The SQLAlchemy model also declares this FK so the local SQLite database
+   has the same rule after schema creation.
+
+3. Pandas validation: "NEW" and "-" in rate become NULL before load
+   File: python/validate_clean_zomato.py
+   Command: python python/validate_clean_zomato.py
+   Output: output/zomato_cleaned.csv
+   Also parses "4.1/5" / "4.1 /5" to 4.1 and strips commas from cost.
+
+4. Indexing strategy on location_id and cuisines for JOIN-heavy analytics
+   File: sql/03_indexing_strategy.sql
+   Applied to SQLite by: python python/apply_indexes_and_features.py
+
+Suggested run order (from this Assessment folder):
+
+  python python/validate_clean_zomato.py
+  python python/etl_create_schema.py
+  python python/ingest_pipeline.py
+  python python/apply_indexes_and_features.py
+
+SQLite database file: analytics_db.sqlite
+MySQL: create the empty database, then run sql/01_*.sql, sql/02_*.sql, sql/03_*.sql
+and set DATABASE_URL before the Python scripts.

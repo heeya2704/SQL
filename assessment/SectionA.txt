@@ -1,0 +1,98 @@
+TOPS Technologies - Working with Databases
+Section A: Concept Application
+Theme: Database Setup & Relational Design (Zomato / analytics_db)
+
+--------------------------------------------------------------------------------
+1. You are setting up a new database for the Zomato project. Which SQL
+   command creates a new database called analytics_db?
+--------------------------------------------------------------------------------
+
+CREATE DATABASE analytics_db;
+
+Optional (MySQL, safe if the database might already exist):
+
+CREATE DATABASE IF NOT EXISTS analytics_db
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+CREATE DATABASE allocates a new named database on the server. After it exists,
+project tables (restaurants, locations, ratings, cuisines) are created inside
+analytics_db using USE analytics_db; (MySQL) or by connecting to that catalog.
+
+--------------------------------------------------------------------------------
+2. You add a restaurant_id column to the restaurants table as its primary key.
+   What is a primary key, and why must its values be unique?
+--------------------------------------------------------------------------------
+
+A primary key is a column (or a set of columns) that uniquely identifies every
+row in a table. On restaurants, restaurant_id is that identifier.
+
+Values must be unique because:
+- Two restaurants cannot share the same identity; duplicates would make joins
+  and updates ambiguous.
+- Primary keys cannot be NULL; every row must be identifiable.
+- Child tables (ratings, restaurant_cuisines) reference this value. If two
+  parents shared an id, foreign keys could not point at a single parent.
+
+Example:
+
+CREATE TABLE restaurants (
+    restaurant_id INT PRIMARY KEY,
+    restaurant_name VARCHAR(255) NOT NULL
+);
+
+--------------------------------------------------------------------------------
+3. The ratings table references restaurant_id from the restaurants table.
+   What is a foreign key, and what integrity rule does it enforce?
+--------------------------------------------------------------------------------
+
+A foreign key is a column (or set of columns) whose values must match a
+primary key (or unique key) in another table.
+
+ratings.restaurant_id -> restaurants.restaurant_id enforces referential
+integrity:
+- You cannot insert a rating for a restaurant_id that does not exist.
+- You cannot delete (or change) a parent restaurant if that would leave
+  orphan rating rows, unless a rule such as ON DELETE CASCADE is defined.
+
+Example:
+
+ALTER TABLE ratings
+ADD CONSTRAINT fk_ratings_restaurant
+FOREIGN KEY (restaurant_id)
+REFERENCES restaurants(restaurant_id);
+
+--------------------------------------------------------------------------------
+4. You apply a NOT NULL constraint to the restaurant_name column.
+   What kind of data entry does this constraint prevent?
+--------------------------------------------------------------------------------
+
+NOT NULL prevents missing names: INSERT/UPDATE cannot store NULL in
+restaurant_name. Every restaurant row must have an actual name value.
+
+It does not by itself block empty strings (''). Those can be blocked with a
+CHECK constraint if the product requires a non-blank name.
+
+Example:
+
+restaurant_name VARCHAR(255) NOT NULL
+
+--------------------------------------------------------------------------------
+5. You draw an ER diagram before writing any SQL.
+   What does an ER diagram represent in relational database design?
+--------------------------------------------------------------------------------
+
+An Entity-Relationship (ER) diagram is a visual model of the database:
+
+- Entities (tables) such as restaurants, locations, ratings, cuisines
+- Attributes (columns) such as restaurant_name, rate, votes
+- Unique identifiers (primary keys)
+- Relationships and cardinality (1:N restaurant-to-ratings, M:N
+  restaurant-to-cuisines)
+- Foreign keys that will implement those relationships
+
+It is drawn before DDL so the design can be normalized (this project targets
+3NF), keys can be chosen, and invalid many-to-many or repeating groups can be
+resolved before tables are created.
+
+See docs/er_diagram.html for the 3NF ER diagram of analytics_db.

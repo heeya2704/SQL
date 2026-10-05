@@ -1,0 +1,10 @@
+﻿# Dataset (not stored in git — GitHub 100MB file limit)
+
+Place the Kaggle file at:
+  assessment/zomato.csv/zomato.csv
+
+Source: https://www.kaggle.com/datasets/himanshupoddar/zomato-bangalore-restaurants
+
+Then from assessment/:
+  pip install -r requirements.txt
+  python python/run_all.py

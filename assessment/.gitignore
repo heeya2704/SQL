@@ -1,0 +1,7 @@
+﻿zomato.csv/
+zomato.csv.zip
+*.sqlite
+__pycache__/
+*.pyc
+output/zomato_cleaned.csv
+.DS_Store

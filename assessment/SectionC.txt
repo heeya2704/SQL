@@ -1,0 +1,56 @@
+Section C: Mini Project
+Title: Predictive Demand Schema Architecture for Food-Tech Analytics
+
+Problem
+Design a normalized, high-performance relational database for real-time feature
+extraction used by restaurant success prediction models. Source: Zomato Bangalore
+Restaurants (Kaggle), local copy at zomato.csv/zomato.csv (~51,717 listing rows).
+
+Deliverables
+1. Optimized SQL DDL     sql/01_analytics_db_schema.sql
+2. Python ingestion      python/validate_clean_zomato.py
+                         python/etl_create_schema.py
+                         python/ingest_pipeline.py
+3. ER diagram (3NF)      docs/er_diagram.html
+4. Feature SQL + report  sql/04_feature_engineering.sql
+                         docs/feature_engineering_report.txt
+
+Architecture (3NF)
+- locations: one row per Bangalore area (BTM, Koramangala 5th Block, ...)
+- restaurants: one row per unique canonical Zomato URL (query context stripped;
+  name, address, cost, flags live here, not on listing rows)
+- cuisines + restaurant_cuisines: many-to-many, atomic cuisine names
+- restaurant_types + restaurant_type_map: many-to-many service formats
+- ratings: composite PK (restaurant_id, listed_in_type, listed_in_city)
+  because the same venue is listed under Delivery, Dine-out, etc.
+
+Why this shape supports prediction
+Success is not a raw listing row. Models need one restaurant grain with:
+- quality (average rate after dropping NEW / "-")
+- demand (votes, listing coverage)
+- price band (approx_cost_for_two)
+- channel (online_order, book_table)
+- product mix (cuisine_count)
+- market saturation (restaurants in the same location)
+
+Those columns are built in view vw_model_features. Binary label is_successful
+is a transparent proxy: avg_rate >= 4.0 AND max_votes >= 100. Replace this
+label with a business KPI if production data includes orders or GMV.
+
+Integrity
+- restaurant_name NOT NULL
+- ratings.restaurant_id FK to restaurants
+- restaurants.location_id FK to locations ON DELETE CASCADE (Section B.2)
+- junction FKs CASCADE with the restaurant parent
+
+Performance
+Indexes on restaurants.location_id, cuisines.cuisine_name,
+restaurant_cuisines.cuisine_id, and ratings(restaurant_id, rate, votes)
+target the JOIN/GROUP BY paths in the feature views.
+
+How to run
+  python python/validate_clean_zomato.py
+  python python/ingest_pipeline.py
+  python python/apply_indexes_and_features.py
+
+Open docs/er_diagram.html in a browser for the ER diagram.
