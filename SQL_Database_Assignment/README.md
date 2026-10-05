@@ -81,6 +81,34 @@ SQL_Database_Assignment/
 │   ├── Task_4.sql
 │   └── Task_5.sql
 │
+├── Session_11/                        # Session 11: Advanced Subqueries (WHERE, SELECT, IN, Relational Division)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
+├── Session_12/                        # Session 12: CTEs & Recursive Queries (WITH, Multi-CTE, Recursive CTE)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
+├── Session_13/                        # Session 13: Ranking Window Functions (ROW_NUMBER, RANK, DENSE_RANK)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
+├── Session_14/                        # Session 14: Value & Frame Window Functions (LAG, LEAD, Running Total, Moving Avg)
+│   ├── Task_1.sql
+│   ├── Task_2.sql
+│   ├── Task_3.sql
+│   ├── Task_4.sql
+│   └── Task_5.sql
+│
 ├── Database_Setup/                    # Core Database Setup & Seed Scripts
 │   ├── 01_create_database.sql         # Database creation script
 │   ├── 02_create_tables.sql           # Schema definition (Tables, PK, FK)
@@ -115,7 +143,7 @@ SQL_Database_Assignment/
 
 ## 🗄️ Standard Sample Database: `company_db`
 
-To ensure consistency across Sessions 06 through 10 and Practice modules, a production-grade relational database named `company_db` is defined inside `Database_Setup/`.
+To ensure consistency across Sessions 06 through 14 and Practice modules, a production-grade relational database named `company_db` is defined inside `Database_Setup/`.
 
 ### Entity Relationship & Tables
 - **`departments`**: `department_id` (PK), `department_name`, `location`
@@ -156,7 +184,7 @@ psql -U postgres -d company_db -f Database_Setup/04_constraints.sql
 Each task script is self-contained. You can execute any file directly in `psql` or your preferred SQL tool:
 
 ```bash
-psql -U postgres -d company_db -f Session_01/Task_1.sql
+psql -U postgres -d company_db -f Session_11/Task_1.sql
 ```
 
 ---
@@ -175,8 +203,13 @@ psql -U postgres -d company_db -f Session_01/Task_1.sql
 | **Session 08** | Window Functions | `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `LEAD`, `LAG`, Frame Clauses |
 | **Session 09** | Database Objects | Materialized/Standard `VIEWS`, B-Tree `INDEXES`, Check & Unique `CONSTRAINTS` |
 | **Session 10** | Advanced Database Programming | Stored Procedures (`PL/pgSQL`), Triggers, Audit Logging, `TRANSACTIONS` |
+| **Session 11** | Advanced Subqueries & Division | Subquery in `WHERE`/`SELECT`/`IN`, Relational Division, Nested Subqueries |
+| **Session 12** | Common Table Expressions (CTEs) | `WITH` clause, Subquery vs CTE readability, Multi-CTEs, Recursive CTEs |
+| **Session 13** | Ranking Window Functions | `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`, `PARTITION BY`, Top-N filtering |
+| **Session 14** | Value & Frame Window Functions | `LAG()`, `LEAD()`, Running Total (`UNBOUNDED PRECEDING`), Moving Average |
 
 ---
 
 ## 📈 Scalability Note
-This repository architecture is designed to scale seamlessly. Future sessions (`Session_11/`, `Session_12/`, etc.) can be appended directly following the standardized directory pattern.
+This repository architecture is designed to scale seamlessly. Future sessions (`Session_15/`, `Session_16/`, etc.) can be appended directly following the standardized directory pattern.
+
